@@ -14,6 +14,27 @@ open class HTTPStream: NetStream {
     private(set) var name: String?
     private lazy var tsWriter = TSFileWriter()
 
+    // open func publish(_ name: String?) {
+    //     lockQueue.async {
+    //         if name == nil {
+    //             self.name = name
+    //             #if os(iOS)
+    //             self.mixer.videoIO.screen?.stopRunning()
+    //             #endif
+    //             self.mixer.stopEncoding()
+    //             self.tsWriter.stopRunning()
+    //             return
+    //         }
+    //         self.name = name
+    //         #if os(iOS)
+    //         self.mixer.videoIO.screen?.startRunning()
+    //         #endif
+    //         self.mixer.startEncoding(delegate: self.tsWriter)
+    //         self.mixer.startRunning()
+    //         self.tsWriter.startRunning()
+    //     }
+    // }
+
     open func publish(_ name: String?) {
         lockQueue.async {
             if name == nil {
@@ -29,6 +50,8 @@ open class HTTPStream: NetStream {
             #if os(iOS)
             self.mixer.videoIO.screen?.startRunning()
             #endif
+            self.tsWriter.expectedMedias.insert(.video)
+            self.tsWriter.expectedMedias.insert(.audio)
             self.mixer.startEncoding(delegate: self.tsWriter)
             self.mixer.startRunning()
             self.tsWriter.startRunning()
